@@ -1,0 +1,46 @@
+# ██████╗  ██████╗ ██╗███████╗ ██████╗ ███╗   ██╗    ██████╗  █████╗  ██████╗██╗  ██╗ █████╗  ██████╗ ███████╗███████╗
+# ██╔══██╗██╔═══██╗██║██╔════╝██╔═══██╗████╗  ██║    ██╔══██╗██╔══██╗██╔════╝██║ ██╔╝██╔══██╗██╔════╝ ██╔════╝██╔════╝
+# ██████╔╝██║   ██║██║███████╗██║   ██║██╔██╗ ██║    ██████╔╝███████║██║     █████╔╝ ███████║██║  ███╗█████╗  ███████╗
+# ██╔═══╝ ██║   ██║██║╚════██║██║   ██║██║╚██╗██║    ██╔═══╝ ██╔══██║██║     ██╔═██╗ ██╔══██║██║   ██║██╔══╝  ╚════██║
+# ██║     ╚██████╔╝██║███████║╚██████╔╝██║ ╚████║    ██║     ██║  ██║╚██████╗██║  ██╗██║  ██║╚██████╔╝███████╗███████║
+# ╚═╝      ╚═════╝ ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝    ╚═╝     ╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚══════╝
+# Developed by: ItzErpandX
+# https://github.com/ItzErpandX
+# Version: 3.0
+
+
+# when should the package expire (IN DAYS)
+# the cleanup only happens when the command /poisonpackages cleanup gets executed or on startup
+package-expiration-days: 1
+# should packages be enabled by default for everyone?
+default-enabled: false
+# the gui title that appears when previewing items
+gui-title: "<blue>Death Package Contents"
+
+# name of the package
+package-name: "<white>%victim%'s stash"
+# lore of the package
+package-lore:
+  - "<gray>Killed by: <white>%killer%"
+  - "<gray>Created on: <white>%date%"
+  - "<gray>ID: <white>%id%"
+  - "<gray>Expires in: <white>%days% day"
+  - ""
+  - "<dark_gray><italic>Right click + sneak to view"
+  - "<dark_gray><italic>items inside"
+
+# messages
+messages:
+  no-permission: "<red>You don't have permission!"
+  player-only: "<red>Only players can use this command!"
+  config-reloaded: "<green>Configuration reloaded!"
+  cleanup-complete: "<green>Deleted %count% expired packages!"
+  package-enabled: "<green>You will now receive death packages!"
+  package-disabled: "<red>You will no longer receive death packages!"
+  package-not-found: "<red>Package not found or empty!"
+  package-claimed: "<green>Successfully claimed death package!"
+  help:
+    - "<gold>PoisonPackages Commands:"
+    - "<yellow>/poisonpackages reload <gray>- Reload configuration"
+    - "<yellow>/poisonpackages cleanup <gray>- Cleanup all packages"
+    - "<yellow>/poisonpackages toggle <gray>- Toggle receiving packages"
