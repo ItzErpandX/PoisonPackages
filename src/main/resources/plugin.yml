@@ -1,0 +1,22 @@
+name: PoisonPackages
+version: '3.0'
+main: me.erpand.PoisonPackages.PoisonPackages
+api-version: '1.20'
+authors: [ ItzErpandX ]
+description: Second recode of PoisonPackages
+website: https://github.com/ItzErpandX
+commands:
+  poisonpackages:
+    description: Manage death packages
+    aliases: pp
+    usage: |
+      /poisonpackages reload - Reload config
+      /poisonpackages cleanup - Delete all packages
+      /poisonpackages toggle - Toggle receiving packages
+permissions:
+  poisonpackages.admin:
+    description: Access to admin commands
+    default: op
+  poisonpackages.toggle:
+    description: Allows toggling package reception
+    default: true
