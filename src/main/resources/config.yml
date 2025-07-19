@@ -9,7 +9,7 @@
 # Version: 3.0
 
 
-# when should the package expire (IN DAYS)
+# when should the package expire (IN DAYS),
 # the cleanup only happens when the command /poisonpackages cleanup gets executed or on startup
 package-expiration-days: 1
 # should packages be enabled by default for everyone?

@@ -11,8 +11,13 @@ commands:
     aliases: pp
     usage: |
       /poisonpackages reload - Reload config
-      /poisonpackages cleanup - Delete all packages
+      /poisonpackages cleanup - Delete expired packages
+      /poisonpackages forcecleanup - Delete all packages
       /poisonpackages toggle - Toggle receiving packages
+  packagestoggle:
+    description: Toggle receiving death packages
+    aliases: [togglepackages, packages]
+    usage: /packagestoggle - Toggle receiving death packages
 permissions:
   poisonpackages.admin:
     description: Access to admin commands
