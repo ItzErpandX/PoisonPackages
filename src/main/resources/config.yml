@@ -39,8 +39,10 @@ messages:
   package-disabled: "<red>You will no longer receive death packages!"
   package-not-found: "<red>Package not found or empty!"
   package-claimed: "<green>Successfully claimed death package!"
+  forcecleanup-complete: "<green>Force deleted ALL %count% packages!"
   help:
     - "<gold>PoisonPackages Commands:"
     - "<yellow>/poisonpackages reload <gray>- Reload configuration"
     - "<yellow>/poisonpackages cleanup <gray>- Cleanup all packages"
+    - "<yellow>/poisonpackages forcecleanup <gray>- Force cleanup ALL packages"
     - "<yellow>/poisonpackages toggle <gray>- Toggle receiving packages"

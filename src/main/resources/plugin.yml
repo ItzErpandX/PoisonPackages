@@ -1,5 +1,5 @@
 name: PoisonPackages
-version: '3.0'
+version: '3.1-HOTFIX'
 main: me.erpand.PoisonPackages.PoisonPackages
 api-version: '1.20'
 authors: [ ItzErpandX ]
@@ -14,10 +14,6 @@ commands:
       /poisonpackages cleanup - Delete expired packages
       /poisonpackages forcecleanup - Delete all packages
       /poisonpackages toggle - Toggle receiving packages
-  packagestoggle:
-    description: Toggle receiving death packages
-    aliases: [togglepackages, packages]
-    usage: /packagestoggle - Toggle receiving death packages
 permissions:
   poisonpackages.admin:
     description: Access to admin commands

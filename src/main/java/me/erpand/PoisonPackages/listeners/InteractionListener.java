@@ -9,6 +9,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
@@ -21,6 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public class InteractionListener implements Listener {
+    // Cooldown in milliseconds (e.g., 1000 ms = 1 second)
+    private static final long CLAIM_COOLDOWN_MS = 3000;
+    private final Map<UUID, Long> lastClaimTime = new ConcurrentHashMap<>();
     
     private static final MiniMessage MINI_MESSAGE = MiniMessage.miniMessage();
     
@@ -98,16 +104,27 @@ public class InteractionListener implements Listener {
     }
 
     private void claimPackage(Player player, long packageId, ItemStack packageItem) {
+        UUID uuid = player.getUniqueId();
+        long now = System.currentTimeMillis();
+        Long last = lastClaimTime.get(uuid);
+        if (last != null && (now - last) < CLAIM_COOLDOWN_MS) {
+            player.sendMessage(MINI_MESSAGE.deserialize("<red>Please wait before claiming another package!"));
+            return;
+        }
+
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             String serializedItems = databaseManager.getPackageItems(packageId);
             List<ItemStack> items = itemSerializer.deserializeItems(serializedItems);
-            
+
             Bukkit.getScheduler().runTask(plugin, () -> {
                 if (items == null || items.isEmpty()) {
                     player.sendMessage(MINI_MESSAGE.deserialize(
                             plugin.getConfig().getString("messages.package-not-found", "<red>Package not found or empty!")));
                     return;
                 }
+
+                // Only set cooldown if claim is successful
+                lastClaimTime.put(uuid, now);
 
                 // Remove the package item
                 packageItem.setAmount(packageItem.getAmount() - 1);

@@ -57,7 +57,7 @@ public final class PoisonPackages extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new DeathListener(this, databaseManager, playersWithPackagesEnabled), this);
         getServer().getPluginManager().registerEvents(new InteractionListener(this, databaseManager), this);
 
-        getLogger().info("DeathPackagePlugin has been enabled!");
+        getLogger().info("PoisonPackages has been enabled!");
     }
 
     @Override
@@ -65,7 +65,7 @@ public final class PoisonPackages extends JavaPlugin {
         if (databaseManager != null) {
             databaseManager.close();
         }
-        getLogger().info("DeathPackagePlugin has been disabled!");
+        getLogger().info("PoisonPackages has been disabled!");
     }
 
     @Override
