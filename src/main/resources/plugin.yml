@@ -1,10 +1,12 @@
 name: PoisonPackages
-version: '3.1-HOTFIX'
+version: '3.2'
 main: me.erpand.PoisonPackages.PoisonPackages
-api-version: '1.20'
+api-version: '1.21'
 authors: [ ItzErpandX ]
 description: Second recode of PoisonPackages
 website: https://github.com/ItzErpandX
+libraries:
+  - org.xerial:sqlite-jdbc:3.53.2.1
 commands:
   poisonpackages:
     description: Manage death packages

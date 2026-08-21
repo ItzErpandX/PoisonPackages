@@ -4,12 +4,12 @@ import me.erpand.PoisonPackages.commands.CommandHandler;
 import me.erpand.PoisonPackages.database.DatabaseManager;
 import me.erpand.PoisonPackages.listeners.DeathListener;
 import me.erpand.PoisonPackages.listeners.InteractionListener;
-import me.erpand.PoisonPackages.utils.SQLiteLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Set;
 import java.util.UUID;
@@ -26,10 +26,6 @@ public final class PoisonPackages extends JavaPlugin {
         // Load configuration
         saveDefaultConfig();
         reloadConfiguration();
-        
-        // Load SQLite library
-        SQLiteLoader sqliteloader = new SQLiteLoader(this);
-        sqliteloader.loadSQLite();
 
         // Initialize database
         databaseManager = new DatabaseManager(this);
@@ -69,7 +65,7 @@ public final class PoisonPackages extends JavaPlugin {
     }
 
     @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String @NonNull [] args) {
         return commandHandler.onCommand(sender, args);
     }
 
