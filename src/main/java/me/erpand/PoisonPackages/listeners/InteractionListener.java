@@ -11,12 +11,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +30,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class InteractionListener implements Listener {
     // Cooldown in milliseconds (e.g., 1000 ms = 1 second)
     private static final long CLAIM_COOLDOWN_MS = 3000;
+
+    // How often the cleanup sweep runs, in ticks (20 ticks = 1 second)
+    private static final long SWEEP_INTERVAL_TICKS = 20L * 60; // every 60 seconds
 
     // Tracks the last time each player successfully STARTED a claim
     private final Map<UUID, Long> lastClaimTime = new ConcurrentHashMap<>();
@@ -42,10 +47,43 @@ public class InteractionListener implements Listener {
     private final DatabaseManager databaseManager;
     private final ItemSerializer itemSerializer;
 
+    private BukkitTask sweeperTask;
+
     public InteractionListener(JavaPlugin plugin, DatabaseManager databaseManager) {
         this.plugin = plugin;
         this.databaseManager = databaseManager;
         this.itemSerializer = new ItemSerializer(plugin);
+
+        startCooldownSweeper();
+    }
+
+    /**
+     * Periodically purges stale entries from lastClaimTime so the map
+     * doesn't grow unbounded over the lifetime of the server process.
+     * Any entry whose cooldown has already expired is safe to remove.
+     */
+    private void startCooldownSweeper() {
+        sweeperTask = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+            long now = System.currentTimeMillis();
+            lastClaimTime.entrySet().removeIf(entry -> (now - entry.getValue()) > CLAIM_COOLDOWN_MS);
+        }, SWEEP_INTERVAL_TICKS, SWEEP_INTERVAL_TICKS);
+    }
+
+    /**
+     * Call this from the plugin's onDisable() to stop the sweeper task,
+     * preventing duplicate tasks from stacking up on /reload.
+     */
+    public void stopCooldownSweeper() {
+        if (sweeperTask != null) {
+            sweeperTask.cancel();
+            sweeperTask = null;
+        }
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        // Immediate cleanup on disconnect, on top of the periodic sweep
+        lastClaimTime.remove(event.getPlayer().getUniqueId());
     }
 
     @EventHandler
@@ -142,9 +180,9 @@ public class InteractionListener implements Listener {
         }
 
         // 3) Set the cooldown NOW, synchronously, before doing any async work.
-        // This is the critical fix: previously the cooldown was only recorded
-        // after the async DB round-trip completed, leaving a window where
-        // multiple clicks could all pass the check before any of them "landed".
+        // Previously the cooldown was only recorded after the async DB round-trip
+        // completed, leaving a window where multiple clicks could all pass the
+        // check before any of them "landed".
         lastClaimTime.put(uuid, now);
 
         Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {

@@ -19,6 +19,7 @@ public final class PoisonPackages extends JavaPlugin {
 
     private DatabaseManager databaseManager;
     private CommandHandler commandHandler;
+    private InteractionListener interactionListener;
     private final Set<UUID> playersWithPackagesEnabled = ConcurrentHashMap.newKeySet();
 
     @Override
@@ -32,8 +33,8 @@ public final class PoisonPackages extends JavaPlugin {
         databaseManager.initialize();
 
         // Load player preferences
-        Bukkit.getScheduler().runTaskAsynchronously(this, () -> 
-            databaseManager.loadPlayerPreferences(playersWithPackagesEnabled));
+        Bukkit.getScheduler().runTaskAsynchronously(this, () ->
+                databaseManager.loadPlayerPreferences(playersWithPackagesEnabled));
 
         // Delete expired packages on startup
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
@@ -45,19 +46,23 @@ public final class PoisonPackages extends JavaPlugin {
 
         // Initialize command handler
         commandHandler = new CommandHandler(this, databaseManager, playersWithPackagesEnabled);
-        
+
         // Register tab completer
         getCommand("poisonpackages").setTabCompleter(commandHandler);
 
         // Register event listeners
+        interactionListener = new InteractionListener(this, databaseManager);
         getServer().getPluginManager().registerEvents(new DeathListener(this, databaseManager, playersWithPackagesEnabled), this);
-        getServer().getPluginManager().registerEvents(new InteractionListener(this, databaseManager), this);
+        getServer().getPluginManager().registerEvents(interactionListener, this);
 
         getLogger().info("PoisonPackages has been enabled!");
     }
 
     @Override
     public void onDisable() {
+        if (interactionListener != null) {
+            interactionListener.stopCooldownSweeper();
+        }
         if (databaseManager != null) {
             databaseManager.close();
         }
